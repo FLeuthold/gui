@@ -1,1 +1,1 @@
-# gui
+winforms app mit c (also nicht winforms, aber mit visual studio gibt es einen designer-view, wo man die oberfläche zusammenklicken kann, wie in winforms)
