@@ -34,59 +34,9 @@ LRESULT CALLBACK DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             else bg = normal; 
 
             HBRUSH br = CreateSolidBrush(bg);
-
-
-
-            //HPEN pen = CreatePen(PS_INSIDEFRAME, 0, RGB(0, 0, 0));
-
-
-            //HGDIOBJ old_pen = SelectObject(item->hdc, pen);
-            //HGDIOBJ old_brush = SelectObject(item->hdc, br);
-            //RoundRect(item->hdc, item->rc.left, item->rc.top, item->rc.right, item->rc.bottom, 10, 10);
             FillRect(hdc, &rc, br);
             DeleteObject(br);
-            //SelectObject(item->hdc, old_pen);
-            //SelectObject(item->hdc, old_brush);
-            //DeleteObject(pen);
-            //DrawFrameControl(hdc, &rc, DFC_BUTTON, DFCS_BUTTONPUSH | ((state & CDIS_SELECTED) ? DFCS_PUSHED : 0)); // Draw text centered 
-            //wchar_t text[128]; GetWindowText(item->hdr.hwndFrom, text, 128); SetBkMode(hdc, TRANSPARENT);
-            //SetTextColor(hdc, RGB(255, 255, 255)); // white text 
-            //DrawText(hdc, text, -1, &rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
-            /*
-            FillRect(hdc, &rc, br); 
-            DeleteObject(br); // Draw themed button frame 
-            DrawFrameControl(hdc, &rc, DFC_BUTTON, DFCS_BUTTONPUSH | ((state & CDIS_SELECTED) ? DFCS_PUSHED : 0)); // Draw text centered 
-            wchar_t text[128]; GetWindowText(item->hdr.hwndFrom, text, 128); SetBkMode(hdc, TRANSPARENT);
-            SetTextColor(hdc, RGB(255, 255, 255)); // white text 
-            DrawText(hdc, text, -1, &rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE); */
-            return CDRF_DODEFAULT; // do NOT let Windows overpaint
-
-
-                /*
-                COLORREF bg = RGB(0,255,255);
-                if (item->uItemState & CDIS_SELECTED)
-                {
-                    bg = RGB(96, 0, 128);
-                    
-                }
-                HBRUSH br = CreateSolidBrush(bg);
-                HPEN pen = CreatePen(PS_INSIDEFRAME, 0, RGB(0, 0, 0));
-
-
-                HGDIOBJ old_pen = SelectObject(item->hdc, pen);
-                HGDIOBJ old_brush = SelectObject(item->hdc, br);
-
-
-                RoundRect(item->hdc, item->rc.left, item->rc.top, item->rc.right, item->rc.bottom, 10, 10);
-
-
-                SelectObject(item->hdc, old_pen);
-                SelectObject(item->hdc, old_brush);
-                DeleteObject(pen);
-
-
-                return CDRF_DODEFAULT;
-                */
+            return CDRF_DODEFAULT;
                 
         }
         break;
