@@ -8,106 +8,33 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 #include <Windows.h>
 #include <Commctrl.h>
+#include "resource.h"
 
-#define IDC_EXIT_BUTTON 101
-#define IDC_PUSHLIKE_BUTTON 102
 
-HBRUSH CreateGradientBrush(COLORREF top, COLORREF bottom, LPNMCUSTOMDRAW item)
+LRESULT CALLBACK DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    HBRUSH Brush = NULL;
-    HDC hdcmem = CreateCompatibleDC(item->hdc);
-    HBITMAP hbitmap = CreateCompatibleBitmap(item->hdc, item->rc.right - item->rc.left, item->rc.bottom - item->rc.top);
-    SelectObject(hdcmem, hbitmap);
 
-    int r1 = GetRValue(top), r2 = GetRValue(bottom), g1 = GetGValue(top), g2 = GetGValue(bottom), b1 = GetBValue(top), b2 = GetBValue(bottom);
-    for (int i = 0; i < item->rc.bottom - item->rc.top; i++)
-    {
-        RECT temp;
-        int r, g, b;
-        //r = int(r1 + double(i * (r2 - r1) / item->rc.bottom - item->rc.top));
-        r = (int)(r1 + (double)(i * (r2 - r1) / item->rc.bottom - item->rc.top));
-        g = (int)(g1 + (double)(i * (g2 - g1) / item->rc.bottom - item->rc.top));
-        b = (int)(b1 + (double)(i * (b2 - b1) / item->rc.bottom - item->rc.top));
-        Brush = CreateSolidBrush(RGB(r, g, b));
-        temp.left = 0;
-        temp.top = i;
-        temp.right = item->rc.right - item->rc.left;
-        temp.bottom = i + 1;
-        FillRect(hdcmem, &temp, Brush);
-        DeleteObject(Brush);
-    }
-    HBRUSH pattern = CreatePatternBrush(hbitmap);
-
-    DeleteDC(hdcmem);
-    DeleteObject(Brush);
-    DeleteObject(hbitmap);
-
-    return pattern;
-}
-
-LRESULT CALLBACK MainWindow(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-    static HBRUSH defaultbrush = NULL;
-    static HBRUSH hotbrush = NULL;
-    static HBRUSH selectbrush = NULL;
-    static HBRUSH push_uncheckedbrush = NULL;
-    static HBRUSH push_checkedbrush = NULL;
-    static HBRUSH push_hotbrush1 = NULL;
-    static HBRUSH push_hotbrush2 = NULL;
     switch (msg)
     {
-    case WM_CREATE:
-    {
-        HWND Exit_Button = CreateWindowEx(NULL, L"BUTTON", L"EXIT",
-            WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
-            50, 50, 100, 100, hwnd, (HMENU)IDC_EXIT_BUTTON, NULL, NULL);
-        if (Exit_Button == NULL)
-        {
-            MessageBox(NULL, L"Button Creation Failed!", L"Error!", MB_ICONEXCLAMATION);
-            exit(EXIT_FAILURE);
-        }
-
-        HWND Pushlike_Button = CreateWindowEx(NULL, L"BUTTON", L"PUSH ME!",
-            WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX | BS_PUSHLIKE,
-            200, 50, 100, 100, hwnd, (HMENU)IDC_PUSHLIKE_BUTTON, NULL, NULL);
-        if (Pushlike_Button == NULL)
-        {
-            MessageBox(NULL, L"Button Creation Failed!", L"Error!", MB_ICONEXCLAMATION);
-            exit(EXIT_FAILURE);
-        }
-    }
-    break;
-    case WM_COMMAND:
-    {
-        switch (LOWORD(wParam))
-        {
-        case IDC_EXIT_BUTTON:
-        {
-            SendMessage(hwnd, WM_CLOSE, 0, 0);
-        }
-        break;
-        }
-    }
-    break;
     case WM_NOTIFY:
     {
-        //LPNMHDR some_item = (LPNMHDR)lParam;
         LPNMCUSTOMDRAW item = (LPNMCUSTOMDRAW)lParam;
-        if (item->hdr.idFrom == IDC_PUSHLIKE_BUTTON && item->hdr.code == NM_CUSTOMDRAW)
+        if (item->hdr.idFrom == IDC_BUTTON2 && item->hdr.code == NM_CUSTOMDRAW)
         {
-            //LPNMCUSTOMDRAW item = (LPNMCUSTOMDRAW)some_item;
-
-            if (IsDlgButtonChecked(hwnd, item->hdr.idFrom))
-            {
-                if (push_checkedbrush == NULL)
-                    push_checkedbrush = CreateGradientBrush(RGB(0, 0, 180), RGB(0, 222, 200), item);
-
-
+                
+                COLORREF bg = RGB(0,255,255);
+                if (item->uItemState & CDIS_SELECTED)
+                
+                {
+                    bg = RGB(96, 0, 128);
+                    
+                }
+                HBRUSH br = CreateSolidBrush(bg);
                 HPEN pen = CreatePen(PS_INSIDEFRAME, 0, RGB(0, 0, 0));
 
 
                 HGDIOBJ old_pen = SelectObject(item->hdc, pen);
-                HGDIOBJ old_brush = SelectObject(item->hdc, push_checkedbrush);
+                HGDIOBJ old_brush = SelectObject(item->hdc, br);
 
 
                 RoundRect(item->hdc, item->rc.left, item->rc.top, item->rc.right, item->rc.bottom, 10, 10);
@@ -119,11 +46,10 @@ LRESULT CALLBACK MainWindow(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 
                 return CDRF_DODEFAULT;
-            }
+
+                
         }
-        return CDRF_DODEFAULT;
-    }
-    break;
+        break;
     case WM_CTLCOLORBTN: //In order to make those edges invisble when we use RoundRect(),
     {                //we make the color of our button's background match window's background
         return (LRESULT)GetSysColorBrush(COLOR_WINDOW + 1);
@@ -135,67 +61,14 @@ LRESULT CALLBACK MainWindow(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         return 0;
     }
     break;
-    case WM_DESTROY:
-    {
-        DeleteObject(defaultbrush);
-        DeleteObject(selectbrush);
-        DeleteObject(hotbrush);
-        DeleteObject(push_checkedbrush);
-        DeleteObject(push_hotbrush1);
-        DeleteObject(push_hotbrush2);
-        DeleteObject(push_uncheckedbrush);
-        PostQuitMessage(0);
-        return 0;
-    }
-    break;
     default:
         return DefWindowProc(hwnd, msg, wParam, lParam);
     }
     return 0;
+    }
 }
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
-{
-    WNDCLASSEX wc;
-    HWND hwnd;
-    MSG msg;
-    const wchar_t ClassName[] = L"Main_Window";
 
-    wc.cbSize = sizeof(WNDCLASSEX);
-    wc.style = 0;
-    wc.lpfnWndProc = MainWindow;
-    wc.cbClsExtra = 0;
-    wc.cbWndExtra = 0;
-    wc.hInstance = hInstance;
-    wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-    wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-    wc.hbrBackground = GetSysColorBrush(COLOR_WINDOW + 1);
-    wc.lpszMenuName = NULL;
-    wc.lpszClassName = ClassName;
-    wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
-
-    if (!RegisterClassEx(&wc))
-    {
-        MessageBox(NULL, L"Window Registration Failed!", L"Error", MB_ICONEXCLAMATION | MB_OK);
-        exit(EXIT_FAILURE);
-    }
-
-    hwnd = CreateWindowEx(WS_EX_CLIENTEDGE, ClassName, L"Window", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 368, 248, NULL, NULL, hInstance, NULL);
-
-    if (hwnd == NULL)
-    {
-        MessageBox(NULL, L"Window Creation Failed!", L"Error!", MB_ICONEXCLAMATION | MB_OK);
-        exit(EXIT_FAILURE);
-    }
-
-    ShowWindow(hwnd, nCmdShow);
-    UpdateWindow(hwnd);
-
-    while (GetMessage(&msg, NULL, 0, 0) > 0)
-    {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-    }
-
-    return msg.message;
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+    return (int)DialogBox(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, DlgProc);
 }
