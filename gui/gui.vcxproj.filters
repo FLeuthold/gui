@@ -29,7 +29,4 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <Manifest Include="gui.exe.manifest" />
-  </ItemGroup>
 </Project>
