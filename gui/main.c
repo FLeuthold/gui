@@ -7,8 +7,26 @@
 INT_PTR CALLBACK DlgProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) {
     switch (Message) {
 
-    case WM_INITDIALOG:
+    case WM_INITDIALOG: {
+        
+        HWND hCombo = GetDlgItem(hwnd, IDC_COMBO1);
+        SendMessage(hCombo, CB_ADDSTRING, 0, (LPARAM)L"Option 1");
+        SendMessage(hCombo, CB_ADDSTRING, 0, (LPARAM)L"Option 2");
+        SendMessage(hCombo, CB_ADDSTRING, 0, (LPARAM)L"Option 3");
+
+        /*HWND hCombo22 = GetDlgItem(hwnd, IDC_LIST1);
+        SendMessage(hCombo22, CB_ADDSTRING, 0, (LPARAM)L"Option 1");
+        SendMessage(hCombo22, CB_ADDSTRING, 0, (LPARAM)L"Option 2");
+        SendMessage(hCombo22, CB_ADDSTRING, 0, (LPARAM)L"Option 3");*/
+
+        HWND hList = GetDlgItem(hwnd, IDC_LIST1);
+        SendMessage(hList, LB_ADDSTRING, 0, (LPARAM)L"Option 1");
+        SendMessage(hList, LB_ADDSTRING, 0, (LPARAM)L"Option 2");
+        SendMessage(hList, LB_ADDSTRING, 0, (LPARAM)L"Option 3");
+        // Optionally select the first item
+        SendMessage(hCombo, CB_SETCURSEL, 0, 0);
         return (INT_PTR)TRUE;
+    }
 
     case WM_COMMAND:
         switch (LOWORD(wParam)) {
