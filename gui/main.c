@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <stdio.h>
 #include "resource.h"
+#include <commctrl.h>
 
 // Die Callback Funktion
 // INT_PTR CALLBACK ist der korrekte Typ für 64-Bit Windows DialogProcs
@@ -14,6 +15,24 @@ INT_PTR CALLBACK DlgProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
         SendMessage(hCombo, CB_ADDSTRING, 0, (LPARAM)L"Option 2");
         SendMessage(hCombo, CB_ADDSTRING, 0, (LPARAM)L"Option 3");
 
+
+        HWND hComboEx = GetDlgItem(hwnd, IDC_COMBOBOXEX1);
+
+        COMBOBOXEXITEM cbei;
+        ZeroMemory(&cbei, sizeof(COMBOBOXEXITEM));
+        cbei.mask = CBEIF_TEXT;   // we’re only setting text for now
+        cbei.iItem = -1;          // append at end
+        cbei.pszText = L"Option 1";
+        SendMessage(hComboEx, CBEM_INSERTITEM, 0, (LPARAM)&cbei);
+
+        cbei.pszText = L"Option 2";
+        SendMessage(hComboEx, CBEM_INSERTITEM, 0, (LPARAM)&cbei);
+
+        cbei.pszText = L"Option 3";
+        SendMessage(hComboEx, CBEM_INSERTITEM, 0, (LPARAM)&cbei);
+
+        // Select first item
+        SendMessage(hComboEx, CB_SETCURSEL, 0, 0);
         /*HWND hCombo22 = GetDlgItem(hwnd, IDC_LIST1);
         SendMessage(hCombo22, CB_ADDSTRING, 0, (LPARAM)L"Option 1");
         SendMessage(hCombo22, CB_ADDSTRING, 0, (LPARAM)L"Option 2");
