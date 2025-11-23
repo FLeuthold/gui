@@ -25,16 +25,23 @@ LRESULT CALLBACK DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             HDC hdc = item->hdc;
             RECT rc = item->rc;
             UINT state = item->uItemState;
-            COLORREF normal = RGB(0, 255, 255); // purple 
-            COLORREF hover = RGB(0, 255, 160); // lighter 
-            COLORREF pressed = RGB(96, 0, 128); // darker 
+            COLORREF normal = RGB(0, 0, 255); // blue 
+            COLORREF hover = RGB(0, 255, 0); // green 
+            COLORREF pressed = RGB(255, 0, 0); // red 
             COLORREF bg; 
             if (state & CDIS_SELECTED) bg = pressed; 
             else if (state & CDIS_HOT) bg = hover; 
             else bg = normal; 
 
             HBRUSH br = CreateSolidBrush(bg);
-            FillRect(hdc, &rc, br);
+
+
+            //FillRect(hdc, &rc, br);
+            HPEN pen = CreatePen(PS_INSIDEFRAME, 0, RGB(0, 0, 0));
+            SelectObject(item->hdc, pen);
+            SelectObject(item->hdc, br);
+            RoundRect(item->hdc, item->rc.left, item->rc.top, item->rc.right, item->rc.bottom, 5, 5);
+
             DeleteObject(br);
             return CDRF_DODEFAULT;
                 
