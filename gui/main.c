@@ -19,19 +19,13 @@ LRESULT CALLBACK DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     case WM_NOTIFY:
     {
         LPNMCUSTOMDRAW item = (LPNMCUSTOMDRAW)lParam;
-        if (item->hdr.idFrom == IDC_BUTTON2 && item->hdr.code == NM_CUSTOMDRAW)
+        if (item->dwDrawStage == CDDS_PREPAINT && item->hdr.idFrom == IDC_BUTTON2 && item->hdr.code == NM_CUSTOMDRAW)
         {
-
-            HDC hdc = item->hdc;
-            RECT rc = item->rc;
             UINT state = item->uItemState;
-            COLORREF normal = RGB(0, 0, 255); // blue 
-            COLORREF hover = RGB(0, 255, 0); // green 
-            COLORREF pressed = RGB(255, 0, 0); // red 
             COLORREF bg; 
-            if (state & CDIS_SELECTED) bg = pressed; 
-            else if (state & CDIS_HOT) bg = hover; 
-            else bg = normal; 
+            if (state & CDIS_SELECTED) bg = RGB(255, 0, 0);
+            else if (state & CDIS_HOT) bg = RGB(0, 255, 0);
+            else bg = RGB(0, 0, 255);
 
             HBRUSH br = CreateSolidBrush(bg);
 
@@ -53,11 +47,8 @@ LRESULT CALLBACK DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     }
     break;
     case WM_CLOSE:
-    {
-        DestroyWindow(hwnd);
-        return 0;
-    }
-    break;
+        EndDialog(hwnd, 0);
+        break;
     default:
         return DefWindowProc(hwnd, msg, wParam, lParam);
     }
